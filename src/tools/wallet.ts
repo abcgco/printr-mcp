@@ -13,6 +13,7 @@ import {
   getWallet,
   listWallets,
   removeWallet,
+  removeWallets,
 } from "~/lib/keystore.js";
 import { activeWallets, type ChainType } from "~/server/wallet-sessions.js";
 
@@ -212,6 +213,29 @@ export function registerWalletTools(server: McpServer): void {
       const removed = removeWallet(wallet_id);
       if (!removed) return toolError(`Wallet ${wallet_id} not found in keystore.`);
       return toolOk({ ok: true });
+    },
+  );
+
+  server.registerTool(
+    "printr_wallet_bulk_remove",
+    {
+      description:
+        "Remove multiple wallets from the local keystore at once. " +
+        "Does not affect active wallets for the current session.",
+      inputSchema: z.object({
+        wallet_ids: z.array(z.string()).min(1).describe("List of keystore wallet IDs to remove"),
+      }),
+      outputSchema: z.object({
+        removed_count: z.number().describe("Number of wallets actually removed"),
+      }),
+    },
+    ({ wallet_ids }) => {
+      try {
+        const count = removeWallets(wallet_ids);
+        return toolOk({ removed_count: count });
+      } catch (error) {
+        return toolError(error instanceof Error ? error.message : String(error));
+      }
     },
   );
 }
