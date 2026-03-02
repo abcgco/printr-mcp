@@ -122,3 +122,14 @@ export function removeWallet(id: string): boolean {
   saveKeystore(ks);
   return true;
 }
+
+export function removeWallets(ids: string[]): number {
+  const ks = loadKeystore();
+  const initialCount = ks.wallets.length;
+  ks.wallets = ks.wallets.filter((w) => !ids.includes(w.id));
+  const removedCount = initialCount - ks.wallets.length;
+  if (removedCount > 0) {
+    saveKeystore(ks);
+  }
+  return removedCount;
+}
