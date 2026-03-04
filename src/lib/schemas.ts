@@ -23,8 +23,15 @@ export const initialBuy = z
       .max(69)
       .optional()
       .describe("Buy a percentage of total supply (0.01–69%)"),
-    spend_usd: z.number().positive().optional().describe("Spend a fixed USD amount"),
-    spend_native: z.string().optional().describe("Spend a native token amount (atomic units)"),
+    spend_usd: z
+      .number()
+      .nonnegative()
+      .optional()
+      .describe("Spend a fixed USD amount (0 for no buy)"),
+    spend_native: z
+      .string()
+      .optional()
+      .describe("Spend a native token amount (atomic units, '0' for no buy)"),
   })
   .refine(
     (v) =>
@@ -63,7 +70,6 @@ export const asset = z.object({
   price_usd: z.number().describe("USD price estimate"),
 });
 
-/** Shared between printr_quote output and printr_create_token output */
 export const quoteOutput = z.object({
   id: z.string().describe("Quote identifier"),
   router: z.string().describe("Routing provider type"),
