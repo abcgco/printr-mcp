@@ -4,13 +4,17 @@ import { createPrintrClient } from "~/lib/client.js";
 import { env } from "~/lib/env.js";
 import { registerCreateTokenTool } from "~/tools/create-token.js";
 import { registerGenerateImageTool } from "~/tools/generate-image.js";
+import { registerGetBalanceTool } from "~/tools/get-balance.js";
 import { registerGetDeploymentsTool } from "~/tools/get-deployments.js";
 import { registerGetTokenTool } from "~/tools/get-token.js";
+import { registerGetTokenBalanceTool } from "~/tools/get-token-balance.js";
 import { registerLaunchTokenTool } from "~/tools/launch-token.js";
 import { registerOpenWebSignerTool } from "~/tools/open-web-signer.js";
 import { registerQuoteTool } from "~/tools/quote.js";
 import { registerSignAndSubmitEvmTool } from "~/tools/sign-and-submit-evm.js";
 import { registerSignAndSubmitSvmTool } from "~/tools/sign-and-submit-svm.js";
+import { registerSupportedChainsTool } from "~/tools/supported-chains.js";
+import { registerTransferTool } from "~/tools/transfer.js";
 import { registerWalletTools } from "~/tools/wallet.js";
 import { version } from "../package.json";
 
@@ -34,6 +38,10 @@ export async function startMcpServer() {
   registerSignAndSubmitSvmTool(server);
   registerOpenWebSignerTool(server);
   registerWalletTools(server);
+  registerGetBalanceTool(server);
+  registerGetTokenBalanceTool(server);
+  registerTransferTool(server);
+  registerSupportedChainsTool(server);
   if (env.OPENROUTER_API_KEY) {
     registerGenerateImageTool(server);
   }
