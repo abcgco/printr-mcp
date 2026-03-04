@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.0](https://github.com/PrintrFi/printr-mcp/compare/v0.4.2...v0.5.0) (2026-03-04)
+
+
+### Features
+
+* add utility tools + enable zero buy ([4bf18d9](https://github.com/PrintrFi/printr-mcp/commit/4bf18d995ce462c2a71fb7290f6a9cd6752a307e))
+* **lib:** add balance fetching utilities ([3686d79](https://github.com/PrintrFi/printr-mcp/commit/3686d793f6f6ff4b064aa909d3379d6beb55edb1))
+* **lib:** add CAIP-10 parsing utilities ([869cd32](https://github.com/PrintrFi/printr-mcp/commit/869cd32e9672f424bdeaf62012e6f5f460b8f7c1))
+* **lib:** add native transfer utilities ([c4b057c](https://github.com/PrintrFi/printr-mcp/commit/c4b057c944f3ba6b37eef83af03c3fa2c7e6f4ca))
+* **tools:** add printr_get_balance tool ([f786755](https://github.com/PrintrFi/printr-mcp/commit/f786755663b996894cf0029e35d5565e71748f7a))
+* **tools:** add printr_get_token_balance tool ([ad67ad8](https://github.com/PrintrFi/printr-mcp/commit/ad67ad8711c24e0293008e146b013394cf11516a))
+* **tools:** add printr_supported_chains tool ([b854a1f](https://github.com/PrintrFi/printr-mcp/commit/b854a1f1da08bad75eae531807214ab2aec15d78))
+* **tools:** add printr_transfer tool ([8223c80](https://github.com/PrintrFi/printr-mcp/commit/8223c808a86f233cff002dc5aaaebaa9199b01e1))
+
+
+### Bug Fixes
+
+* **schemas:** allow zero initial buy for token launch ([d724e67](https://github.com/PrintrFi/printr-mcp/commit/d724e67a5fc604f1fce1b696421bc52ca739fb94))
+
 ## [0.4.2](https://github.com/PrintrFi/printr-mcp/compare/v0.4.1...v0.4.2) (2026-03-03)
 
 
