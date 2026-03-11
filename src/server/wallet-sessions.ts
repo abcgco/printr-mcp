@@ -1,5 +1,6 @@
-/** Chain type discriminator */
-export type ChainType = "evm" | "svm";
+import type { ChainType } from "~/lib/caip.js";
+
+export type { ChainType };
 
 export type ActiveWallet = {
   privateKey: string;
@@ -8,3 +9,6 @@ export type ActiveWallet = {
 
 /** In-memory active wallets — cleared on process restart */
 export const activeWallets = new Map<ChainType, ActiveWallet>();
+
+/** In-memory treasury wallets — used by fund/drain deployment wallet tools */
+export const treasuryWallets = new Map<ChainType, ActiveWallet>();
