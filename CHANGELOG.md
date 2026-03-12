@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0](https://github.com/PrintrFi/printr-mcp/compare/v0.9.0...v0.10.0) (2026-03-12)
+
+
+### Features
+
+* persistent state with master deployment password for wallet recovery ([353fd99](https://github.com/PrintrFi/printr-mcp/commit/353fd9998aa7020b8a5a814615f31ae275a4d075))
+* **state:** add persistent state with master deployment password ([37110df](https://github.com/PrintrFi/printr-mcp/commit/37110df57d25a03521a50d48fe4b8d5a33178c61))
+
+
+### Bug Fixes
+
+* **fund-deployment-wallet:** always persist wallets to prevent fund loss ([7994696](https://github.com/PrintrFi/printr-mcp/commit/7994696219b350a6183e5a26275b8826d7f9c6c2))
+
 ## [0.9.0](https://github.com/PrintrFi/printr-mcp/compare/v0.8.1...v0.9.0) (2026-03-12)
 
 
