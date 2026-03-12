@@ -100,7 +100,9 @@ function isWebSocketError(error: unknown): boolean {
     msg.includes("ws://") ||
     msg.includes("wss://") ||
     msg.includes("subscription") ||
-    msg.includes("socket")
+    msg.includes("socket") ||
+    msg.includes("signaturesubscribe") ||
+    (msg.includes("method") && msg.includes("not found")) // JSON-RPC -32601
   );
 }
 
