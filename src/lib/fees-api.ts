@@ -9,7 +9,18 @@ import { type Client, createClient } from "@connectrpc/connect";
 import { createGrpcWebTransport } from "@connectrpc/connect-web";
 import { env } from "./env.js";
 import { Backend } from "./proto/api/api_connect.js";
+import type {
+  ChainProtocolFees as ProtoChainProtocolFees,
+  Payload as ProtoPayload,
+  PayloadEVM as ProtoPayloadEVM,
+  PayloadSolana as ProtoPayloadSolana,
+} from "./proto/api/api_pb.js";
+import type { AssetAmountV0 } from "./proto/api/misc_pb.js";
 import { Account } from "./proto/caip/account_pb.js";
+import type {
+  AccountMeta as ProtoAccountMeta,
+  SolanaIx as ProtoSolanaIx,
+} from "./proto/wingman/misc_pb.js";
 
 const PRINTR_API_URL = env.PRINTR_BACKEND_URL ?? "https://api.printr.money";
 
@@ -115,8 +126,7 @@ function toSimpleAccount(account: Account | undefined): CaipAccount | undefined 
 /**
  * Convert proto AssetAmountV0 to simple AssetAmount
  */
-// biome-ignore lint/suspicious/noExplicitAny: Proto types
-function toSimpleAssetAmount(amount: any): AssetAmount | undefined {
+function toSimpleAssetAmount(amount: AssetAmountV0 | undefined): AssetAmount | undefined {
   if (!amount) return undefined;
   return {
     asset: toSimpleAccount(amount.asset),
@@ -128,84 +138,81 @@ function toSimpleAssetAmount(amount: any): AssetAmount | undefined {
 }
 
 /**
+ * Convert proto SolanaIx to simple SolanaIx
+ */
+function toSimpleSolanaIx(ix: ProtoSolanaIx, targetChain: string): SolanaIx {
+  return {
+    // wingman.SolanaIx uses Base58Pubkey which has a `value` field
+    programId: ix.programId?.value
+      ? { chainId: targetChain, address: ix.programId.value }
+      : undefined,
+    accounts: (ix.accounts || []).map((acc: ProtoAccountMeta) => ({
+      // wingman.AccountMeta uses Base58Pubkey for pubkey
+      pubkey: acc.pubkey?.value ? { chainId: targetChain, address: acc.pubkey.value } : undefined,
+      isSigner: acc.isSigner || false,
+      isWritable: acc.isWritable || false,
+    })),
+    // wingman.SolanaIx uses `data` field (base64 encoded)
+    dataBase64: ix.data || "",
+  };
+}
+
+/**
+ * Convert proto PayloadEVM to simple PayloadEVM
+ */
+function toSimplePayloadEVM(evm: ProtoPayloadEVM, targetChain: string): PayloadEVM {
+  return {
+    targetChain: evm.targetChain || targetChain,
+    calldata: evm.calldata || "",
+    txTo: evm.txTo || "",
+    txValue: evm.txValue || "0",
+    gasLimit: String(evm.gasLimit || "0"),
+  };
+}
+
+/**
+ * Convert proto PayloadSolana to simple PayloadSolana
+ */
+function toSimplePayloadSolana(svm: ProtoPayloadSolana, targetChain: string): PayloadSolana {
+  return {
+    ixs: (svm.calldata || []).map((ix) => toSimpleSolanaIx(ix, targetChain)),
+    lookupTable: svm.lookupTable?.value,
+    telecoinMintAddress: svm.telecoinMintAddress
+      ? {
+          chainId: svm.telecoinMintAddress.chainId || "",
+          address: svm.telecoinMintAddress.address || "",
+        }
+      : undefined,
+  };
+}
+
+/**
  * Convert proto Payload to simple Payload
  */
-// biome-ignore lint/suspicious/noExplicitAny: Proto types
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Proto conversion with multiple cases
-function toSimplePayload(payload: any): Payload | undefined {
+function toSimplePayload(payload: ProtoPayload | undefined): Payload | undefined {
   if (!payload) return undefined;
 
   const targetChain = payload.targetChain || "";
   const p = payload.payload;
 
-  if (p?.case === "evm" && p.value) {
+  if (p.case === "evm") {
     return {
       targetChain,
-      payload: {
-        case: "evm",
-        value: {
-          targetChain: p.value.targetChain || targetChain,
-          calldata: p.value.calldata || "",
-          txTo: p.value.txTo || "",
-          txValue: p.value.txValue || "0",
-          gasLimit: String(p.value.gasLimit || "0"),
-        },
-      },
+      payload: { case: "evm", value: toSimplePayloadEVM(p.value, targetChain) },
     };
   }
 
-  if (p?.case === "svm" && p.value) {
+  if (p.case === "svm") {
     return {
       targetChain,
-      payload: {
-        case: "svm",
-        value: {
-          ixs: (p.value.calldata || []).map(
-            // biome-ignore lint/suspicious/noExplicitAny: Proto types
-            (ix: any) => ({
-              // wingman.SolanaIx uses Base58Pubkey which has a `value` field
-              programId: ix.programId?.value
-                ? {
-                    chainId: targetChain,
-                    address: ix.programId.value,
-                  }
-                : undefined,
-              accounts: (ix.accounts || []).map(
-                // biome-ignore lint/suspicious/noExplicitAny: Proto types
-                (acc: any) => ({
-                  // wingman.AccountMeta uses Base58Pubkey for pubkey
-                  pubkey: acc.pubkey?.value
-                    ? {
-                        chainId: targetChain,
-                        address: acc.pubkey.value,
-                      }
-                    : undefined,
-                  isSigner: acc.isSigner || false,
-                  isWritable: acc.isWritable || false,
-                }),
-              ),
-              dataBase64: ix.dataBase64 || ix.data || "",
-            }),
-          ),
-          lookupTable: p.value.lookupTable?.value,
-          telecoinMintAddress: p.value.telecoinMintAddress
-            ? {
-                chainId: p.value.telecoinMintAddress.chainId || "",
-                address: p.value.telecoinMintAddress.address || "",
-              }
-            : undefined,
-        },
-      },
+      payload: { case: "svm", value: toSimplePayloadSolana(p.value, targetChain) },
     };
   }
 
-  if (p?.case === "svmRaw" && p.value) {
+  if (p.case === "svmRaw") {
     return {
       targetChain,
-      payload: {
-        case: "svmRaw",
-        value: { calldata: p.value.calldata || "" },
-      },
+      payload: { case: "svmRaw", value: { calldata: p.value.calldata || "" } },
     };
   }
 
@@ -215,10 +222,7 @@ function toSimplePayload(payload: any): Payload | undefined {
 /**
  * Convert proto ChainProtocolFees to simple format
  */
-function toSimpleChainFees(
-  // biome-ignore lint/suspicious/noExplicitAny: Proto types
-  fees: any,
-): ChainProtocolFeesSimple {
+function toSimpleChainFees(fees: ProtoChainProtocolFees): ChainProtocolFeesSimple {
   return {
     chainId: fees.chainId || "",
     dev: toSimpleAccount(fees.dev),
