@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/PrintrFi/printr-mcp/compare/v0.8.0...v0.8.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* **svm:** detect signatureSubscribe method not found for WS fallback ([c7bd5de](https://github.com/PrintrFi/printr-mcp/commit/c7bd5de43f36cc64e7e7d5959b4ba349c4b36145))
+
 ## [0.8.0](https://github.com/PrintrFi/printr-mcp/compare/v0.7.0...v0.8.0) (2026-03-12)
 
 
