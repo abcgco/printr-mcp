@@ -1,5 +1,3 @@
-/** @jsxImportSource react */
-
 import { Box, Static, useApp } from "ink";
 import { useEffect, useState } from "react";
 import { Banner } from "./components/banner.js";
