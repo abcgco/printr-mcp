@@ -3,10 +3,11 @@ import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 import { privateKeyToAccount } from "viem/accounts";
 import { checkEvmBalance, checkSvmBalance } from "~/lib/balance.js";
+import { type ChainType, chainTypeFromCaip2 } from "~/lib/caip.js";
 import { getChainMeta } from "~/lib/chains.js";
 import { env } from "~/lib/env.js";
 import { normalisePrivateKey, parseEvmCaip10 } from "~/lib/evm.js";
-import { type ActiveWallet, activeWallets, type ChainType } from "~/server/wallet-sessions.js";
+import { type ActiveWallet, activeWallets } from "~/server/wallet-sessions.js";
 
 export type { ChainType, ActiveWallet };
 
@@ -26,10 +27,6 @@ export type WalletResolution =
       chain: string;
     }
   | { kind: "error"; message: string };
-
-function chainTypeFromCaip2(caip2: string): ChainType {
-  return caip2.startsWith("solana:") ? "svm" : "evm";
-}
 
 function deriveAddress(privateKey: string, type: ChainType): string {
   if (type === "evm") return privateKeyToAccount(normalisePrivateKey(privateKey)).address;

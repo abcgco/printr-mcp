@@ -3,6 +3,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { createPrintrClient } from "~/lib/client.js";
 import { env } from "~/lib/env.js";
 import { registerCreateTokenTool } from "~/tools/create-token.js";
+import { registerDrainDeploymentWalletTool } from "~/tools/drain-deployment-wallet.js";
+import { registerFundDeploymentWalletTool } from "~/tools/fund-deployment-wallet.js";
 import { registerGenerateImageTool } from "~/tools/generate-image.js";
 import { registerGetBalanceTool } from "~/tools/get-balance.js";
 import { registerGetDeploymentsTool } from "~/tools/get-deployments.js";
@@ -11,6 +13,7 @@ import { registerGetTokenBalanceTool } from "~/tools/get-token-balance.js";
 import { registerLaunchTokenTool } from "~/tools/launch-token.js";
 import { registerOpenWebSignerTool } from "~/tools/open-web-signer.js";
 import { registerQuoteTool } from "~/tools/quote.js";
+import { registerSetTreasuryWalletTool } from "~/tools/set-treasury-wallet.js";
 import { registerSignAndSubmitEvmTool } from "~/tools/sign-and-submit-evm.js";
 import { registerSignAndSubmitSvmTool } from "~/tools/sign-and-submit-svm.js";
 import { registerSupportedChainsTool } from "~/tools/supported-chains.js";
@@ -38,9 +41,12 @@ export async function startMcpServer() {
   registerSignAndSubmitSvmTool(server);
   registerOpenWebSignerTool(server);
   registerWalletTools(server);
+  registerSetTreasuryWalletTool(server);
   registerGetBalanceTool(server);
   registerGetTokenBalanceTool(server);
   registerTransferTool(server);
+  registerFundDeploymentWalletTool(server);
+  registerDrainDeploymentWalletTool(server);
   registerSupportedChainsTool(server);
   if (env.OPENROUTER_API_KEY) {
     registerGenerateImageTool(server);

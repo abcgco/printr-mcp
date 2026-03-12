@@ -4,6 +4,7 @@ import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { z } from "zod";
+import { type ChainType, chainTypeFromCaip2 } from "~/lib/caip.js";
 import { toolError, toolOk } from "~/lib/client.js";
 import { normalisePrivateKey } from "~/lib/evm.js";
 import {
@@ -15,11 +16,7 @@ import {
   removeWallet,
   removeWallets,
 } from "~/lib/keystore.js";
-import { activeWallets, type ChainType } from "~/server/wallet-sessions.js";
-
-function chainTypeFromCaip2(caip2: string): ChainType {
-  return caip2.startsWith("solana:") ? "svm" : "evm";
-}
+import { activeWallets } from "~/server/wallet-sessions.js";
 
 function deriveAddress(privateKey: string, type: ChainType): string {
   if (type === "evm") return privateKeyToAccount(normalisePrivateKey(privateKey)).address;
