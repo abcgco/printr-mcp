@@ -131,6 +131,7 @@ function toSimpleAssetAmount(amount: any): AssetAmount | undefined {
  * Convert proto Payload to simple Payload
  */
 // biome-ignore lint/suspicious/noExplicitAny: Proto types
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Proto conversion with multiple cases
 function toSimplePayload(payload: any): Payload | undefined {
   if (!payload) return undefined;
 

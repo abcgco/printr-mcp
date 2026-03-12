@@ -2,6 +2,7 @@
 // @generated from file api/misc.proto (package printrfi.api, syntax proto3)
 /* eslint-disable */
 // @ts-nocheck
+// biome-ignore-all lint/suspicious/noShadowRestrictedNames: Generated proto code
 
 import type {
   BinaryReadOptions,
