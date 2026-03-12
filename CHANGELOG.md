@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.1](https://github.com/PrintrFi/printr-mcp/compare/v0.10.0...v0.10.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* **svm:** skip websocket for http-only rpcs and fix drain rent-exempt ([63485a2](https://github.com/PrintrFi/printr-mcp/commit/63485a2d60d59dcc457f29b30b5291e7737d674c))
+* **svm:** skip websocket for http-only rpcs and fix drain rent-exempt ([7470cf7](https://github.com/PrintrFi/printr-mcp/commit/7470cf7451d0680d4ddfaaef859c663dce21e48a))
+
 ## [0.10.0](https://github.com/PrintrFi/printr-mcp/compare/v0.9.0...v0.10.0) (2026-03-12)
 
 
