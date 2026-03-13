@@ -31,6 +31,18 @@ const outputSchema = z.object({
   message: z.string().describe("Status message"),
 });
 
+function deriveCreatorFeesMessage(totalFeesUsd: number, claimableChainsCount: number): string {
+  if (totalFeesUsd === 0) {
+    return "No creator fees have accumulated yet.";
+  }
+
+  if (claimableChainsCount === 0) {
+    return `$${totalFeesUsd.toFixed(2)} in fees accumulated, but none are claimable yet (minimum threshold not reached).`;
+  }
+
+  return `$${totalFeesUsd.toFixed(2)} in creator fees available across ${claimableChainsCount} chain(s).`;
+}
+
 export function registerGetCreatorFeesTool(server: McpServer): void {
   server.registerTool(
     "printr_get_creator_fees",
@@ -67,21 +79,12 @@ export function registerGetCreatorFeesTool(server: McpServer): void {
         const appUrl = env.PRINTR_APP_URL ?? "https://app.printr.money";
         const claimUrl = `${appUrl}/profile?section=claim-fees`;
 
-        let message: string;
-        if (totalFeesUsd === 0) {
-          message = "No creator fees have accumulated yet.";
-        } else if (claimableChains.length === 0) {
-          message = `$${totalFeesUsd.toFixed(2)} in fees accumulated, but none are claimable yet (minimum threshold not reached).`;
-        } else {
-          message = `$${totalFeesUsd.toFixed(2)} in creator fees available across ${claimableChains.length} chain(s).`;
-        }
-
         return toolOk({
           token_id: response.telecoinId || token_id,
           total_fees_usd: totalFeesUsd,
           chains: chainFees,
           claim_url: claimUrl,
-          message,
+          message: deriveCreatorFeesMessage(totalFeesUsd, claimableChains.length),
         });
       } catch (error) {
         return toolError(error instanceof Error ? error.message : String(error));
